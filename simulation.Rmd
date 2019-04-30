@@ -1,0 +1,170 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+#install.packages("fitdistrplus")
+library(fitdistrplus)
+dataSimulation<-read.csv('D:/1_polytech/Bac_5_1/simulation/data.csv',sep = ',')
+x<-dataSimulation$date.d.arrive
+z<-dataSimulation$dateArriveDuree
+y<-dataSimulation$duree
+```
+
+inter arrivee
+```{r}
+
+#diagramme
+#hist(z,freq = FALSE,breaks=100,xlim = c(0,quantile(z,1)),main = "L'intensit¨¦ de duree d'arrivant", xlab = "Dur¨¦e d'arrivant")
+
+#xexpotential<-seq(0,max(z),length.out=1268)  
+#lines(xexpotential,dexp(xexpotential,rate=0.175),col="red")
+
+#fit distribution
+#fitdist(z,"exp")
+#diagramme2
+#plot(fitdist(z,"exp"))
+
+#ks test
+ks.test(z,"pexp",0.175)
+
+#chi2 test: si p >5%, on recoit l'hypothese.
+#chisq.test(z,dexp(xexpotential,rate=0.175))
+
+#counter le nombre
+diagramme1<-hist(z,breaks = 200,xlim=c(0,max(z)),main = "Le nombre de duree d'arrivant", xlab = "Dur¨¦e d'arrivant")
+nombre<-diagramme1$breaks
+expectDonnee<-diagramme1$density
+for(i in 1:length(diagramme1$counts)){
+  #expectDonnee[i]<- 0.175*exp(nombre[i]*0.175*(-1))
+  expectDonnee[i]<- dexp(nombre[i],0.175)
+}
+testDonnee<-diagramme1$density
+chisq.test(diagramme1$counts,expectDonnee)
+
+diagramme2<-hist(z,freq=FALSE,breaks = 200,xlim=c(0,max(z)),main = "Lintensite de duree d'arrivant", xlab = "Dur¨¦e d'arrivant")
+lines(nombre[1:length(diagramme1$counts)],expectDonnee,col="red")
+```
+
+
+```{r}
+#fitdist(y,"gamma")
+diagramme<-hist(y/max(y),freq = FALSE,breaks=200,main = "L'intensit¨¦ de dur¨¦e service",xlab = "Dur¨¦e service", ylab = "L'intensit¨¦")
+
+#verite
+#seeds<-seq(0,1,length.out=length(diagramme$density))
+#lines(seeds,dbeta(seeds,2.5,6.4),col="red")
+
+
+#fit distribution
+#fitdistr(y/max(y),dbeta)
+#plot(fitdistr(y/max(y),dbeta))
+
+#chi2
+#chisq.test(diagramme$density,dbeta(seeds,2.5,6.4))
+
+#chi2 corrige
+intensite<-diagramme$density
+breaks<-diagramme$breaks
+counts<-diagramme$counts
+expect<-diagramme$counts
+for(i in 1:length(diagramme$counts)){
+  expect[i]<-dbeta(diagramme$breaks[i],shape1 = 2.5,shape2 = 6.4)
+}
+chisq.test(diagramme$counts,expect)
+lines(breaks[1:length(diagramme$counts)],expect,col="red")
+```
+test 3b
+```{r}
+library(fitdistrplus)
+testSimulation<-read.csv('C:/Users/tudou/Desktop/test0106.csv',sep = ',')
+#HStest<-testSimulation$HS
+dureetest<-testSimulation$duree
+
+#fitdist(HStest,"exp")
+#ks.test(dureetest,"pexp",0.175)
+
+
+#diagramme
+#hist(dureetest,freq = FALSE,breaks=100,xlim = c(0,max(dureetest)),main = "L'intensit¨¦ de duree d'arrivant", xlab = "Dur¨¦e d'arrivant")
+#xexpotential<-seq(0,50,length.out=1282)  
+#lines(xexpotential,dexp(xexpotential,rate=0.175),col="red")
+
+#diagramme2
+#plot(fitdist(dureetest,"exp"))
+
+#chi2
+#chisq.test(dureetest,dexp(xexpotential,rate=0.175))
+
+#counter le nombre
+diagramme1<-hist(dureetest,breaks = 200,xlim=c(0,max(dureetest)),main = "Le nombre de duree d'arrivant", xlab = "Dur¨¦e d'arrivant")
+nombre<-diagramme1$breaks
+expectDonnee<-diagramme1$density
+for(i in 1:length(diagramme1$counts)){
+  expectDonnee[i]<- dexp(nombre[i],0.175)
+}
+testDonnee<-diagramme1$density
+chisq.test(diagramme1$counts,expectDonnee)
+
+diagramme2<-hist(dureetest,freq=FALSE,breaks = 200,xlim=c(0,max(dureetest)),main = "Lintensite de duree d'arrivant", xlab = "Dur¨¦e d'arrivant")
+lines(nombre[1:length(diagramme1$counts)],expectDonnee,col="red")
+```
+
+simulation Beta
+```{r}
+library(fitdistrplus)
+Simulation<-read.csv('C:/Users/tudou/Desktop/test0107.csv',sep = ',')
+dureeService<-Simulation$dureeService
+
+#duree Beta
+diagramme<-hist(dureeService/max(dureeService),freq = FALSE,breaks=200,main = "L'intensit¨¦ de dur¨¦e service",xlab = "Dur¨¦e service", ylab = "L'intensit¨¦")
+
+#nombre2<-diagramme$density
+#seeds2<-seq(0,1,length.out=length(diagramme$density))
+#lines(seeds2,dbeta(seeds,2.5,6.4),col="red")
+
+#chi2
+#chi2
+#chisq.test(diagramme$density,dbeta(seeds,2.5,6.4))
+
+#chi2 corrige
+intensite<-diagramme$density
+breaks<-diagramme$breaks
+counts<-diagramme$counts
+expect<-diagramme$counts
+for(i in 1:length(diagramme$counts)){
+  expect[i]<-dbeta(diagramme$breaks[i],shape1 = 2.5,shape2 = 6.4)
+}
+chisq.test(diagramme$counts,expect)
+lines(breaks[1:length(diagramme$counts)],expect,col="red")
+```
+
+distribution empirique
+```{r}
+library(fitdistrplus)
+empiriqueService<-read.csv('C:/Users/tudou/Desktop/empiriqueService.csv',sep = ',')
+empiriqueArrive<-read.csv('C:/Users/tudou/Desktop/empiriqueArrive.csv',sep = ',')
+
+funtion1<-ecdf(empiriqueArrive$dureeArrive)
+plot.ecdf(empiriqueArrive$dureeArrive)
+
+funtion2<-ecdf(empiriqueService$dureeService)
+plot.ecdf(empiriqueService$dureeService)
+```
+
+
+

@@ -1,0 +1,161 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+1.获取工作路径:
+```{r}
+getwd()
+```
+
+
+```{r}
+table(iris$Species)
+```
+
+```{r}
+echo=TRUE
+print("1: ")
+data("iris")
+print("2: ")
+dim(iris)
+print("3: ")
+names(iris)
+print("4: ")
+iris$Species
+print("5: ")
+iris$Petal.Length
+```
+
+```{r}
+levels(iris$Species)
+```
+```{r}
+table(iris$Species)
+```
+```{r}
+summary(iris$Species)
+```
+饼图、柱状图、克利夫兰点图
+```{r}
+par(mfrow=c(1,3))
+pie(table(iris$Species))
+barplot(table(iris$Species))
+dotchart(as.numeric(table(iris$Species)))
+```
+```{r}
+a<-c(1,2,3)
+b<-c(4,5,6)
+par(mfrow=c(1,2))
+barplot(1)
+barplot(b)
+```
+
+```{r}
+summary(iris$Petal.Length)
+sum(iris$Petal.Length)
+length(iris$Petal.Length)
+sum(iris$Petal.Length)/length(iris$Petal.Length)
+```
+
+```{r}
+sort(iris$Petal.Length)
+```
+
+```{r}
+ordlongPetal<-sort(iris$Petal.Length)
+ordlongPetal
+sum(ordlongPetal)/length(ordlongPetal)
+ordlongPetal[37]
+(ordlongPetal[92]+ordlongPetal[37])/2
+```
+```{r}
+hist(iris$Petal.Length,col=grey(0.6),main="histogramme")
+```
+
+```{r}
+plot(iris$Petal.Length,iris$Petal.Width,xlab="Longeur du \npetale",ylab = "largeur du petale",main = "Nuage de points",pch=20)
+```
+pch=20，表示，所用的画图的表示的黑点的模式是20号
+```{r}
+sunflowerplot(iris$Petal.Length,iris$Petal.Width,xlab="Longeur du \npetale",ylab = "largeur du petale",main = "Nuage de points",pch=20)
+```
+
+先计算概率密度函数 然后画等高线图
+```{r}
+library(MASS)
+densite<-kde2d(iris$Petal.Length,iris$Petal.Width)
+filled.contour(densite,color=topo.colors,xlab="Longeur du \npetale",ylab = "largeur du petale")
+```
+
+箱线图：
+1.中间的箱子的上下边，分别是第三，一个四分位数。
+2.中间的黑线是第二四分位数（中位数）。
+3.设r是变量的四分位距，箱图上方的小横线是小于或等于第三个四分位数+1.5r的最大观测值。同时下方的小横线是，大于等于第一个四分位数减去1.5r的最大的观测值。
+4.图中的小白圈，代表很大可能性上是离群点(outlier).(在其他图中也适用）
+```{r}
+boxplot(iris$Petal.Length,iris$Petal.Width)
+```
+
+频率直方图：
+1.横坐标为不同的区间，纵坐标为落入该区间内的频数
+2.breaks就是设置频率直方图中的分组，不加breaks R会自动设置。本题分组，从0到8，每个区间等于0.05
+```{r}
+summary(iris) #facultatif, bilan des donnees du fichier
+par(mfrow=c(2,2))
+brk=seq(from=0,to=8,length=20)
+hist(iris$Petal.Length,main="Ensemble des 150 iris",xlab = "Longeur du petale",breaks = brk)
+hist(iris$Petal.Length[iris$Species=="setosa"],main="Setosa",xlab = "Longeur du petale",breaks = brk)
+hist(iris$Petal.Length[iris$Species=="versicolor"],main="Versicolor",xlab = "Longeur du petale",breaks = brk)
+hist(iris$Petal.Length[iris$Species=="virginica"],main="Virginica",xlab = "Longeur du petale",breaks = brk)
+```
+xlim, x 用 (x1, x2) 限制 plot 的x 轴。同理，ylim，y 用（y1,y2）限制plot的y轴。
+```{r}
+par(mfrow=c(2,2))
+plot(iris$Petal.Length,iris$Petal.Width,xlab = "Longeur du petale",ylab = "largeur du petale",main = "Nuage de points",pch=20)
+
+plot(iris$Petal.Length[iris$Species=="setosa"],iris$Petal.Width[iris$Species=="setosa"],xlim=c(1,6.9),ylim = c(0.1,2.5),xlab = "Longeur du petale",ylab = "largeur du petale",main = "iris setosa",pch=20)
+
+plot(iris$Petal.Length[iris$Species=="versicolor"],iris$Petal.Width[iris$Species=="versicolor"],xlim=c(1,6.9),ylim = c(0.1,2.5),xlab = "Longeur du petale",ylab = "largeur du petale",main = "iris versicolor",pch=20)
+
+plot(iris$Petal.Length[iris$Species=="virginica"],iris$Petal.Width[iris$Species=="virginica"],xlim=c(1,6.9),ylim = c(0.1,2.5),xlab = "Longeur du petale",ylab = "largeur du petale",main = "iris virginica",pch=20)
+```
+
+
+
+矩阵散点图（矩阵多元图）：
+如果 X 是一个数值矩阵或者数据框，命令      > pairs(X) 将产生 X 的列之间两两相对的成对散点图阵列（pairwise scatterplot matrix）。
+也就是说，X的每一列相对 X 的所有其他列而产生 n(n-1) 个 图，并且把这些图以阵列个形式显示在图区。
+
+iris[1:4]:给定数据框的列来作图
+main="Les iris de Fisher -- 3 especes":图的名字
+pch=c(21,25,24)[spiris]:用这三种符号作图
+bg=c("red","green3","blue")[spiris]:
+las=2:las是这些刻度的显示形式，0表示总是平行于坐标轴，1表示总是水平，2表示总是垂直于坐标轴。3就是竖着.
+gap=0:子图之间的距离，边距线。
+labels = c("Longeur\nSepale","Largeur\nSepale","Longeur\nPetale","Largeur\nSepale"):变量的名称。
+图中第1列 : 
+第1个格子是第1列和第1列的数据, 横坐标是第1列的数据, 纵坐标是第1列的数据. (无图显示)
+第2个格子是第1列和第2列的数据, 横坐标代表第1列, 是第1列的数据, 纵坐标是第2列的数据.
+第3个格子是第1列和第3列的数据, 横坐标代表第1列, 是第1列的数据, 纵坐标是第3列的数据.
+第4个格子是第1列和第4列的数据, 横坐标代表第1列, 是第1列的数据, 纵坐标是第4列的数据.
+```{r}
+spiris<-unclass(iris$Species)#去除分类那一列
+pairs(iris[1:4],main="Les iris de Fisher -- 3 especes", pch=c(21,25,24)[spiris],bg=c("red","green3","blue")[spiris],
+      las=2,gap=0,labels = c("Longeur\nSepale","Largeur\nSepale","Longeur\nPetale","Largeur\nSepale"))
+```
+
